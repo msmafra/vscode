@@ -145,7 +145,54 @@ suite('window namespace tests', () => {
 		});
 	});
 
-	test('active editor not always correct... #49125', async function () {
+	test('active editor not always correct... #49125 - original', async function () {
+		const [docA, docB] = await Promise.all([
+			workspace.openTextDocument(await createRandomFile()),
+			workspace.openTextDocument(await createRandomFile()),
+		]);
+		for (let c = 0; c < 4; c++) {
+			let editorA = await window.showTextDocument(docA, ViewColumn.One);
+			assert(window.activeTextEditor === editorA);
+
+			let editorB = await window.showTextDocument(docB, ViewColumn.Two);
+			assert(window.activeTextEditor === editorB);
+		}
+	});
+
+	test('active editor not always correct... #49125 - logging', async function () {
+		const [docA, docB] = await Promise.all([
+			workspace.openTextDocument(await createRandomFile()),
+			workspace.openTextDocument(await createRandomFile()),
+		]);
+
+		console.log('Created random files: ' + docA.uri.toString() + ' and ' + docB.uri.toString());
+
+		for (let c = 0; c < 4; c++) {
+			let editorA = await window.showTextDocument(docA, ViewColumn.One);
+			console.log('Showing: ' + editorA.document.fileName + ' and active editor is: ' + window.activeTextEditor?.document.fileName);
+			assert(window.activeTextEditor === editorA);
+
+			let editorB = await window.showTextDocument(docB, ViewColumn.Two);
+			console.log('Showing: ' + editorB.document.fileName + ' and active editor is: ' + window.activeTextEditor?.document.fileName);
+			assert(window.activeTextEditor === editorB);
+		}
+	});
+
+	test('active editor not always correct... #49125 - original variant', async function () {
+		const [docA, docB] = await Promise.all([
+			workspace.openTextDocument(await createRandomFile()),
+			workspace.openTextDocument(await createRandomFile()),
+		]);
+		for (let c = 0; c < 4; c++) {
+			let editorA = await window.showTextDocument(docA, ViewColumn.One);
+			assert.equal(window.activeTextEditor, editorA);
+
+			let editorB = await window.showTextDocument(docB, ViewColumn.Two);
+			assert.equal(window.activeTextEditor, editorB);
+		}
+	});
+
+	test('active editor not always correct... #49125 - working', async function () {
 		const randomFile1 = await createRandomFile();
 		const randomFile2 = await createRandomFile();
 
